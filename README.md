@@ -94,6 +94,9 @@
 ### 📦 Standard Installation
 
 ```bash
+# Install from PyPI
+pip install litproxy
+
 # Install from local directory
 pip install .
 
@@ -122,7 +125,7 @@ pip install httpx curl_cffi
 ### Basic Usage
 
 ```python
-from Litproxy import LitProxy
+from litproxy import LitProxy
 import requests
 
 # Initialize LitProxy
@@ -148,7 +151,7 @@ result = fetch_data("https://httpbin.org/ip")
 ### Auto-Retry with Proxy Rotation
 
 ```python
-from Litproxy import LitProxy
+from litproxy import LitProxy
 
 # Create session with automatic retry and proxy rotation
 session = LitProxy.create_auto_retry_session(max_proxy_attempts=3)
@@ -164,7 +167,7 @@ response = session.get("https://httpbin.org/ip")
 ### Context Manager Usage
 
 ```python
-from Litproxy import LitProxy
+from litproxy import LitProxy
 import requests
 
 proxy = LitProxy()
@@ -182,7 +185,7 @@ with proxy.use_proxy():
 ### Decorator Pattern
 
 ```python
-from Litproxy import LitProxy
+from litproxy import LitProxy
 
 @LitProxy.proxyify
 def scrape_website(url):
@@ -202,7 +205,7 @@ response = robust_request("https://httpbin.org/ip")
 ### Session Management
 
 ```python
-from Litproxy import LitProxy
+from litproxy import LitProxy
 
 # Get pre-configured sessions for different HTTP clients
 requests_session = LitProxy.get_proxied_session()
@@ -225,7 +228,7 @@ LitProxy.patch(my_session)  # Adds proxy support
 ### Class-Based Applications with Metaclass
 
 ```python
-from Litproxy import LitMeta
+from litproxy import LitMeta
 import requests
 
 class WebScraper(metaclass=LitMeta):
@@ -248,7 +251,7 @@ response = scraper.scrape("https://httpbin.org/ip")
 ### Manual Proxy Selection
 
 ```python
-from Litproxy import LitProxy
+from litproxy import LitProxy
 
 # Get a random working proxy from all available sources
 random_proxy = LitProxy.get_working_proxy()
@@ -269,7 +272,7 @@ print(f"Loaded {proxy_count} proxies")
 ### Proxy Testing and Diagnostics
 
 ```python
-from Litproxy import LitProxy
+from litproxy import LitProxy
 
 # Test all available proxies
 test_results = LitProxy.test_all_proxies(timeout=5)
@@ -285,7 +288,7 @@ print(f"Cache age: {stats['cache_age_seconds']} seconds")
 ### Custom Configuration
 
 ```python
-from Litproxy import LitProxy
+from litproxy import LitProxy
 
 # Configure cache duration (default: 300 seconds)
 LitProxy.set_proxy_cache_duration(600)  # 10 minutes
@@ -306,7 +309,7 @@ LitProxy.disable_auto_retry_for_provider(my_provider)
 ### Enhanced Auto-Retry Features
 
 ```python
-from Litproxy import LitProxy
+from litproxy import LitProxy
 
 # Create session with enhanced auto-retry
 session = LitProxy.create_auto_retry_session(max_proxy_attempts=3)
@@ -363,7 +366,7 @@ LitProxy supports multiple proxy sources with no prioritization:
 
 ```python
 import requests
-from Litproxy import LitProxy
+from litproxy import LitProxy
 
 # Method 1: Session patching with auto-retry
 session = requests.Session()
@@ -383,7 +386,7 @@ response = requests.get("https://httpbin.org/ip", proxies=proxies)
 
 ```python
 import httpx
-from Litproxy import LitProxy
+from litproxy import LitProxy
 
 # Sync client with proxy support
 client = LitProxy.get_proxied_httpx_client()
@@ -402,7 +405,7 @@ async with LitProxy.get_proxied_httpx_client() as client:
 ### Curl_cffi Sessions
 
 ```python
-from Litproxy import LitProxy
+from litproxy import LitProxy
 
 # Sync session with browser impersonation
 session = LitProxy.get_proxied_curl_session(impersonate="chrome120")
@@ -419,7 +422,7 @@ async_session = LitProxy.get_proxied_curl_async_session(impersonate="safari15_5"
 ### Proxy Statistics
 
 ```python
-from Litproxy import LitProxy
+from litproxy import LitProxy
 
 stats = LitProxy.get_proxy_stats()
 print(f"""
@@ -435,7 +438,7 @@ Proxy Statistics:
 ### Health Monitoring
 
 ```python
-from Litproxy import LitProxy
+from litproxy import LitProxy
 
 # Test current proxy
 current = LitProxy.current_proxy()
@@ -477,7 +480,7 @@ pip install pytest httpx curl_cffi
 python -m pytest
 
 # Test with different HTTP clients
-python -c "from Litproxy import LitProxy; print('✓ Basic import works')"
+python -c "from litproxy import LitProxy; print('✓ Basic import works')"
 ```
 
 ### Areas for Contribution
