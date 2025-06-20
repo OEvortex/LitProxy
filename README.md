@@ -125,27 +125,33 @@ pip install httpx curl_cffi
 ### Basic Usage
 
 ```python
-from litproxy import LitProxy
+from litproxy import proxy, use_proxy, patch, proxyify, get_proxy_dict
 import requests
 
-# Initialize LitProxy
-proxy = LitProxy()
-
 # Method 1: Context Manager (Recommended)
-with proxy.use_proxy():
+with use_proxy():
     response = requests.get("https://httpbin.org/ip")
     print(response.json())
 
 # Method 2: Direct Proxy Dictionary
-proxies = proxy.get_proxy_dict()
+proxies = get_proxy_dict()
 response = requests.get("https://httpbin.org/ip", proxies=proxies)
 
-# Method 3: Decorator
-@proxy.proxyify
+# Method 3: One-liner for a working proxy
+proxies = proxy()
+response = requests.get("https://httpbin.org/ip", proxies=proxies)
+
+# Method 4: Decorator
+@proxyify
 def fetch_data(url):
     return requests.get(url)
 
 result = fetch_data("https://httpbin.org/ip")
+
+# Method 5: Patch a session or function
+session = requests.Session()
+patch(session)
+response = session.get("https://httpbin.org/ip")
 ```
 
 ### Auto-Retry with Proxy Rotation
@@ -167,17 +173,13 @@ response = session.get("https://httpbin.org/ip")
 ### Context Manager Usage
 
 ```python
-from litproxy import LitProxy
+from litproxy import use_proxy
 import requests
 
-proxy = LitProxy()
-
 # Global proxy patching for all requests
-with proxy.use_proxy():
-    # All requests in this block will use proxies
+with use_proxy():
     response1 = requests.get("https://httpbin.org/ip")
     response2 = requests.get("https://httpbin.org/user-agent")
-    
     print("IP 1:", response1.json()['origin'])
     print("IP 2:", response2.json()['origin'])
 ```
@@ -185,44 +187,25 @@ with proxy.use_proxy():
 ### Decorator Pattern
 
 ```python
-from litproxy import LitProxy
+from litproxy import proxyify
 
-@LitProxy.proxyify
+@proxyify
 def scrape_website(url):
     import requests
     return requests.get(url).text
 
-@LitProxy.auto_retry_with_fallback(max_proxy_attempts=5)
-def robust_request(url):
-    import requests
-    return requests.get(url)
-
-# These functions will automatically use proxies
 content = scrape_website("https://httpbin.org/html")
-response = robust_request("https://httpbin.org/ip")
 ```
 
-### Session Management
+### Patch Usage
 
 ```python
-from litproxy import LitProxy
-
-# Get pre-configured sessions for different HTTP clients
-requests_session = LitProxy.get_proxied_session()
-httpx_client = LitProxy.get_proxied_httpx_client()
-curl_session = LitProxy.get_proxied_curl_session(impersonate="chrome120")
-
-# Use sessions normally - proxies are already configured
-response = requests_session.get("https://httpbin.org/ip")
-
-# Advanced session management with auto-retry
-auto_retry_session = LitProxy.create_auto_retry_session(max_proxy_attempts=3)
-response = auto_retry_session.get("https://httpbin.org/ip")  # Automatically retries with different proxies
-
-# Patch existing sessions with auto-retry functionality
+from litproxy import patch
 import requests
-my_session = requests.Session()
-LitProxy.patch(my_session)  # Adds proxy support
+
+session = requests.Session()
+patch(session)
+response = session.get("https://httpbin.org/ip")
 ```
 
 ### Class-Based Applications with Metaclass
@@ -234,12 +217,9 @@ import requests
 class WebScraper(metaclass=LitMeta):
     def __init__(self):
         self.session = requests.Session()
-    
     def scrape(self, url):
-        # Session automatically has proxies injected
         return self.session.get(url)
 
-# Proxies are automatically configured
 scraper = WebScraper()
 response = scraper.scrape("https://httpbin.org/ip")
 ```
@@ -251,36 +231,36 @@ response = scraper.scrape("https://httpbin.org/ip")
 ### Manual Proxy Selection
 
 ```python
-from litproxy import LitProxy
+from litproxy import get_working_proxy, get_auto_proxy, test_proxy, list_proxies, refresh_proxy_cache
 
 # Get a random working proxy from all available sources
-random_proxy = LitProxy.get_working_proxy()
-any_proxy = LitProxy.get_auto_proxy()          # Random selection
+random_proxy = get_working_proxy()
+any_proxy = get_auto_proxy()          # Random selection
 
 # Test specific proxy
 proxy_url = "http://proxy.example.com:8080"
-is_working = LitProxy.test_proxy(proxy_url, timeout=10)
+is_working = test_proxy(proxy_url, timeout=10)
 
 # Get all available proxies
-all_proxies = LitProxy.list_proxies()
+all_proxies = list_proxies()
 
 # Force refresh proxy cache
-proxy_count = LitProxy.refresh_proxy_cache()
+proxy_count = refresh_proxy_cache()
 print(f"Loaded {proxy_count} proxies")
 ```
 
 ### Proxy Testing and Diagnostics
 
 ```python
-from litproxy import LitProxy
+from litproxy import test_all_proxies, get_proxy_stats
 
 # Test all available proxies
-test_results = LitProxy.test_all_proxies(timeout=5)
-for proxy, status in test_results.items():
+results = test_all_proxies(timeout=5)
+for proxy, status in results.items():
     print(f"{proxy}: {'✓' if status else '✗'}")
 
 # Get proxy statistics
-stats = LitProxy.get_proxy_stats()
+stats = get_proxy_stats()
 print(f"Available proxies: {stats['proxy_count']}")
 print(f"Cache age: {stats['cache_age_seconds']} seconds")
 ```

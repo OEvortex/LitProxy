@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "litproxy"
-version = "0.1.3"
+version = "0.2.0"
 description = "Modern, easy-to-use Python proxy management library with rotation, patching, and diagnostics."
 readme = "README.md"
 authors = [
