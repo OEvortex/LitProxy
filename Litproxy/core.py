@@ -33,7 +33,7 @@ _proxy_cache = {
     'cache_duration': 300  # 5 minutes
 }
 
-PROXY_SOURCE_URL = "http://207.180.209.185:5000/ips.txt"
+PROXY_SOURCE_URL = "https://proxies.typegpt.net/ips.txt"
 
 
 def fetch_proxies() -> List[str]:
